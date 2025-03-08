@@ -25,19 +25,22 @@ jobs:
         python-version: "3.9"
     - name: Install dependencies
       run: |
+        python --version  # Debugging check
         python -m venv venv
         source venv/bin/activate
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pip install --upgrade pip setuptools wheel  # Upgrade core tools
+        pip install --no-cache-dir flake8 pytest  # Avoid using cached packages
+        if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi
     - name: Lint with flake8
       run: |
-        source venv/bin/activate
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          source venv/bin/activate
+          pip install --no-cache-dir flake8  # Ensure flake8 is installed
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+     
     - name: Test with pytest
       run: |
-        source venv/bin/activate
-        pytest --disable-warnings 
+          source venv/bin/activate
+          pip install --no-cache-dir pytest  # Ensure pytest is installed
+          pytest --disable-warnings
+     
